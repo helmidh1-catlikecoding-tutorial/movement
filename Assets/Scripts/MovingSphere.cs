@@ -18,7 +18,11 @@ public class MovingSphere : MonoBehaviour
     [SerializeField, Range(0f, 90f)]
     float maxGroundAngle = 25f;
 
+    [SerializeField, Range(0f, 100f)]
+    float maxSnapSpeed = 100f;
+
     int jumpPhase;
+    int stepsSinceLastGrounded;
 
     float minGroundDotProduct;
 
@@ -76,9 +80,11 @@ public class MovingSphere : MonoBehaviour
 
     void UpdateState ()
     {
+        stepsSinceLastGrounded += 1;
         velocity = body.velocity;
-        if (OnGround)
+        if (OnGround || SnapToGround())
         {
+            stepsSinceLastGrounded = 0;
             jumpPhase = 0;
             if (groundContactCount > 1)
             {
@@ -89,6 +95,9 @@ public class MovingSphere : MonoBehaviour
         {
             contactNormal = Vector3.up;
         }
+        GetComponent<Renderer>().material.SetColor(
+            "_Color", OnGround ? Color.black : Color.white
+        );
     }
 
     void Jump()
@@ -139,7 +148,7 @@ public class MovingSphere : MonoBehaviour
         EvaluateCollision(collision);
     }
 
-    void EvaluateCollision (Collision collision)
+    void EvaluateCollision(Collision collision)
     {
         for (int i = 0; i < collision.contactCount; i++)
         {
@@ -150,5 +159,32 @@ public class MovingSphere : MonoBehaviour
                 contactNormal += normal;
             }
         }
+    }
+
+    bool SnapToGround()
+    {
+        if (stepsSinceLastGrounded > 1)
+        {
+            return false;
+        }
+        if (!Physics.Raycast(body.position, Vector3.down, out RaycastHit hit))
+        {
+            return false;
+        }
+        if (hit.normal.y < minGroundDotProduct) 
+        { 
+            return false;
+        }
+
+        groundContactCount = 1;
+        contactNormal = hit.normal;
+        float speed = velocity.magnitude;
+        float dot = Vector3.Dot(velocity, hit.normal);
+        if (dot > 0f)
+        {
+            velocity = (velocity - hit.normal * dot).normalized * speed;
+        }
+            
+        return true;
     }
 }
