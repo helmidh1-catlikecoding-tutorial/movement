@@ -11,6 +11,9 @@ public class MovingSphere : MonoBehaviour
 
     Vector3 velocity;
 
+    [SerializeField]
+    Rect allowedArea = new Rect(-5, -5, 10f, 10f);
+
     void Update()
     {
         Vector2 playerInput;
