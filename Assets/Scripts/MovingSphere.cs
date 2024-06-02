@@ -63,7 +63,13 @@ public class MovingSphere : MonoBehaviour
             Jump();
         }
         body.velocity = velocity;
+        ClearState();
+    }
+
+    void ClearState()
+    {
         onGround = false;
+        contactNormal = Vector3.zero;
     }
 
     void UpdateState ()
@@ -72,6 +78,7 @@ public class MovingSphere : MonoBehaviour
         if (onGround)
         {
             jumpPhase = 0;
+            contactNormal.Normalize();
         }
         else
         {
@@ -135,7 +142,7 @@ public class MovingSphere : MonoBehaviour
             if (normal.y >= minGroundDotProduct)
             {
                 onGround = true;
-                contactNormal = normal;
+                contactNormal += normal;
             }
         }
     }
