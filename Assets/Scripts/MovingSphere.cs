@@ -30,6 +30,14 @@ public class MovingSphere : MonoBehaviour
         velocity.z =
             Mathf.MoveTowards(velocity.z, desiredVelocity.z, maxSpeedChange);
         Vector3 displacement = velocity * Time.deltaTime;
-        transform.localPosition += displacement;
+        Vector3 newPosition = transform.localPosition + displacement;
+        if (!allowedArea.Contains(new Vector2(newPosition.x, newPosition.z)))
+        {
+            newPosition.x =
+                Mathf.Clamp(newPosition.x, allowedArea.xMin, allowedArea.xMax);
+            newPosition.z =
+                Mathf.Clamp(newPosition.z, allowedArea.yMin, allowedArea.yMax);
+        }
+        transform.localPosition = newPosition;
     }
 }
