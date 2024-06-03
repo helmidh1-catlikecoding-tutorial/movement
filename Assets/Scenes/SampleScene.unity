@@ -241,8 +241,8 @@ GameObject:
   - component: {fileID: 114906419}
   - component: {fileID: 114906418}
   - component: {fileID: 114906417}
-  - component: {fileID: 114906416}
   - component: {fileID: 114906422}
+  - component: {fileID: 114906416}
   m_Layer: 8
   m_Name: Sphere
   m_TagString: Untagged
@@ -268,11 +268,15 @@ MonoBehaviour:
   jumpHeight: 2
   maxAirJumps: 1
   maxGroundAngle: 25
+  maxStairsAngle: 50
   maxSnapSpeed: 100
   probeDistance: 1
   probeMask:
     serializedVersion: 2
-    m_Bits: 51
+    m_Bits: 1075
+  stairsMask:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!96 &114906417
 TrailRenderer:
   serializedVersion: 3
@@ -1256,7 +1260,7 @@ GameObject:
   - component: {fileID: 536580058}
   - component: {fileID: 536580057}
   m_Layer: 0
-  m_Name: Prism
+  m_Name: Stairs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1352,7 +1356,7 @@ MonoBehaviour:
   m_Rotation: {x: 0, y: 0, z: 0, w: 1}
   m_PivotLocation: 1
   m_PivotPosition: {x: 0, y: 0, z: 0}
-  m_UnmodifiedMeshVersion: 2585
+  m_UnmodifiedMeshVersion: 2674
   m_ShapeBox:
     m_Center: {x: 5.77146, y: 3.4310627, z: 8.7685795}
     m_Extent: {x: 5.77146, y: 3.4310627, z: 8.7685795}
@@ -3118,7 +3122,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 1324549638}
-  m_VersionIndex: 2585
+  m_VersionIndex: 2674
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
