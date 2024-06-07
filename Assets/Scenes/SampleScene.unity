@@ -264,7 +264,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: 10
   maxAcceleration: 39
-  maxAirAcceleration: 1
+  maxAirAcceleration: 18.5
   jumpHeight: 2
   maxAirJumps: 1
   maxGroundAngle: 25
@@ -3136,7 +3136,7 @@ Transform:
   m_GameObject: {fileID: 536580056}
   serializedVersion: 2
   m_LocalRotation: {x: 1.110223e-17, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.6199999, y: -0.0000009536743, z: 1.7299995}
+  m_LocalPosition: {x: 5.66, y: -0.0000009536743, z: -12.97}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
