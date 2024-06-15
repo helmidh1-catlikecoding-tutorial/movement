@@ -27,7 +27,12 @@ public class OrbitCamera : MonoBehaviour
     [SerializeField, Range(0f, 90f)]
     float alignSmoothRange = 45f;
 
+    [SerializeField]
+    LayerMask obstructionMask = -1;
+
     float lastManualRotationTime;
+
+    Camera regularCamera;
 
     Vector3 focusPoint, previousFocusPoint;
 
@@ -35,6 +40,7 @@ public class OrbitCamera : MonoBehaviour
 
     void Awake()
     {
+        regularCamera = GetComponent<Camera>();
         focusPoint = focus.position;
         transform.localRotation = Quaternion.Euler(orbitAngles);
     }
@@ -55,11 +61,20 @@ public class OrbitCamera : MonoBehaviour
         Vector3 lookDirection = lookRotation * Vector3.forward;
         Vector3 lookPosition = focusPoint - lookDirection * distance;
 
-        if (Physics.Raycast(
-            focusPoint, -lookDirection, out RaycastHit hit, distance
+        Vector3 rectOffset = lookDirection * regularCamera.nearClipPlane;
+        Vector3 rectPosition = lookPosition + rectOffset;
+        Vector3 castFrom = focus.position;
+        Vector3 castLine = rectPosition - castFrom;
+        float castDistance = castLine.magnitude;
+        Vector3 castDirection = castLine / castDistance;
+
+        if (Physics.BoxCast(
+            castFrom, CameraHalfExtends, castDirection, out RaycastHit hit, 
+            lookRotation, castDistance, obstructionMask
         )) 
         {
-            lookPosition = focusPoint - lookDirection * hit.distance;
+            rectPosition = castFrom + castDirection * hit.distance;
+            lookPosition = rectPosition - rectOffset;
         }
 
         transform.SetPositionAndRotation(lookPosition, lookRotation);
@@ -166,5 +181,19 @@ public class OrbitCamera : MonoBehaviour
     {
         float angle = Mathf.Acos(direction.y) * Mathf.Rad2Deg;
         return direction.x < 0f ? 360f - angle : angle;
+    }
+
+    Vector3 CameraHalfExtends
+    {
+        get
+        {
+            Vector3 halfExtends;
+            halfExtends.y =
+                regularCamera.nearClipPlane *
+                Mathf.Tan(0.5f * Mathf.Deg2Rad * regularCamera.fieldOfView);
+            halfExtends.x = halfExtends.y * regularCamera.aspect;
+            halfExtends.z = 0f;
+            return halfExtends;
+        }
     }
 }
