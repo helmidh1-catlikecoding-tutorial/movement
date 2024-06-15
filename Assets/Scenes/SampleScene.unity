@@ -277,6 +277,7 @@ MonoBehaviour:
   stairsMask:
     serializedVersion: 2
     m_Bits: 1024
+  playerInputSpace: {fileID: 963194228}
 --- !u!96 &114906417
 TrailRenderer:
   serializedVersion: 3
@@ -3369,8 +3370,8 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
-  orthographic: 1
+  field of view: 26.991467
+  orthographic: 0
   orthographic size: 5
   m_Depth: -1
   m_CullingMask:
@@ -3415,9 +3416,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   focus: {fileID: 114906421}
-  distance: 5
+  distance: 15
   focusRadius: 1
   focusCentering: 0.5
+  rotationSpeed: 224
+  minVerticalAngle: -30
+  maxVerticalAngle: 60
+  alignDelay: 5
+  alignSmoothRange: 45
 --- !u!1 &1145262786
 GameObject:
   m_ObjectHideFlags: 0

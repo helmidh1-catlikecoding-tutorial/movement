@@ -24,6 +24,9 @@ public class OrbitCamera : MonoBehaviour
     [SerializeField, Min(0f)]
     float alignDelay = 5f;
 
+    [SerializeField, Range(0f, 90f)]
+    float alignSmoothRange = 45f;
+
     float lastManualRotationTime;
 
     Vector3 focusPoint, previousFocusPoint;
@@ -51,6 +54,14 @@ public class OrbitCamera : MonoBehaviour
         }
         Vector3 lookDirection = lookRotation * Vector3.forward;
         Vector3 lookPosition = focusPoint - lookDirection * distance;
+
+        if (Physics.Raycast(
+            focusPoint, -lookDirection, out RaycastHit hit, distance
+        )) 
+        {
+            lookPosition = focusPoint - lookDirection * hit.distance;
+        }
+
         transform.SetPositionAndRotation(lookPosition, lookRotation);
     }
 
@@ -135,7 +146,19 @@ public class OrbitCamera : MonoBehaviour
         }
 
         float headingAngle = GetAngle(movement / Mathf.Sqrt(movementDeltaSqr));
-        orbitAngles.y = headingAngle;
+        float deltaAbs = Mathf.Abs(Mathf.DeltaAngle(orbitAngles.y, headingAngle));
+        float rotationChange = 
+            rotationSpeed * Mathf.Min(Time.unscaledDeltaTime, movementDeltaSqr);
+        if (deltaAbs < alignSmoothRange)
+        {
+            rotationChange *= deltaAbs / alignSmoothRange;
+        }
+        else if (180f - deltaAbs < alignSmoothRange)
+        {
+            rotationChange *= (180f - deltaAbs) / alignSmoothRange;
+        }
+        orbitAngles.y = 
+            Mathf.MoveTowardsAngle(orbitAngles.y, headingAngle, rotationChange);
         return true;
     }
 
