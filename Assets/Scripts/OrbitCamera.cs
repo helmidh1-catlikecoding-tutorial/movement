@@ -53,7 +53,8 @@ public class OrbitCamera : MonoBehaviour
     {
         gravityAlignment =
             Quaternion.FromToRotation(
-                gravityAlignment * Vector3.up, -Physics.gravity.normalized
+                gravityAlignment * Vector3.up, 
+                CustomGravity.GetUpAxis(focusPoint)
             ) * gravityAlignment;
         UpdateFocusPoint();
         if (ManualRotation() || AutomaticRotation())

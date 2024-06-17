@@ -27,9 +27,6 @@ public class MovingSphere : MonoBehaviour
     [SerializeField]
     LayerMask probeMask = -1, stairsMask = -1;
 
-    [SerializeField]
-    Transform playerInputSpace = default;
-
     int jumpPhase;
     int stepsSinceLastGrounded, stepsSinceLastJump;
 
@@ -37,6 +34,7 @@ public class MovingSphere : MonoBehaviour
 
     Vector3 velocity, desiredVelocity;
     Vector3 contactNormal, steepNormal;
+
     Vector3 upAxis, rightAxis, forwardAxis;
 
     Rigidbody body;
@@ -45,7 +43,7 @@ public class MovingSphere : MonoBehaviour
 
     int groundContactCount, steepContactCount;
     bool OnGround => groundContactCount > 0;
-    bool OnSteep=> steepContactCount > 0;
+    bool OnSteep => steepContactCount > 0;
 
     void OnValidate()
     {
@@ -65,21 +63,8 @@ public class MovingSphere : MonoBehaviour
         playerInput.x = Input.GetAxis("Horizontal");
         playerInput.y = Input.GetAxis("Vertical");
         playerInput = Vector2.ClampMagnitude(playerInput, 1f);
-        if (playerInputSpace)
-        {
-            rightAxis = ProjectDirectionOnPlane(playerInputSpace.right, upAxis);
-            forwardAxis = 
-                ProjectDirectionOnPlane(playerInputSpace.forward, upAxis);
-        }
-        else
-        {
-            rightAxis = ProjectDirectionOnPlane(Vector3.right, upAxis);
-            forwardAxis = ProjectDirectionOnPlane(Vector3.forward, upAxis);
-        }
-
         desiredVelocity =
             new Vector3(playerInput.x, 0f, playerInput.y) * maxSpeed;
-
         desiredJump |= Input.GetButtonDown("Jump");
     }
 
@@ -104,7 +89,7 @@ public class MovingSphere : MonoBehaviour
         contactNormal = steepNormal = Vector3.zero;
     }
 
-    void UpdateState ()
+    void UpdateState()
     {
         stepsSinceLastGrounded += 1;
         stepsSinceLastJump += 1;
@@ -168,12 +153,12 @@ public class MovingSphere : MonoBehaviour
         velocity += jumpDirection * jumpSpeed;
     }
 
-    Vector3 ProjectDirectionOnPlane (Vector3 direction, Vector3 normal)
+    Vector3 ProjectDirectionOnPlane(Vector3 direction, Vector3 normal)
     {
         return (direction - normal * Vector3.Dot(direction, normal)).normalized;
     }
 
-    void AdjustVelocity ()
+    void AdjustVelocity()
     {
         Vector3 xAxis = ProjectDirectionOnPlane(rightAxis, contactNormal);
         Vector3 zAxis = ProjectDirectionOnPlane(forwardAxis, contactNormal);
@@ -189,7 +174,7 @@ public class MovingSphere : MonoBehaviour
             Mathf.MoveTowards(currentZ, desiredVelocity.z, maxSpeedChange);
 
         velocity += xAxis * (newX - currentX) + zAxis * (newZ - currentZ);
-    } 
+    }
 
     void OnCollisionEnter(Collision collision)
     {
@@ -213,7 +198,7 @@ public class MovingSphere : MonoBehaviour
                 groundContactCount += 1;
                 contactNormal += normal;
             }
-            else if (upDot > -0.01f)
+            else if (normal.y > -0.01f)
             {
                 steepContactCount += 1;
                 steepNormal += normal;
@@ -233,14 +218,14 @@ public class MovingSphere : MonoBehaviour
             return false;
         }
         if (!Physics.Raycast(
-            body.position, -upAxis, out RaycastHit hit, 
+            body.position, -upAxis, out RaycastHit hit,
             probeDistance, probeMask))
         {
             return false;
         }
         float upDot = Vector3.Dot(upAxis, hit.normal);
-        if (upDot < GetMinDot(hit.collider.gameObject.layer)) 
-        { 
+        if (upDot < GetMinDot(hit.collider.gameObject.layer))
+        {
             return false;
         }
 
@@ -251,7 +236,7 @@ public class MovingSphere : MonoBehaviour
         {
             velocity = (velocity - hit.normal * dot).normalized * speed;
         }
-            
+
         return true;
     }
 
@@ -271,7 +256,7 @@ public class MovingSphere : MonoBehaviour
         return false;
     }
 
-    float GetMinDot (int layer)
+    float GetMinDot(int layer)
     {
         return (stairsMask & (1 << layer)) == 0 ?
             minGroundDotProduct : minStairsDotProduct;
